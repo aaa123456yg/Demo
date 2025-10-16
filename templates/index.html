@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的簡易部落格</title>
+    <!-- 引入 Tailwind CSS 以美化介面 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <div class="container mx-auto max-w-3xl p-4 md:p-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">我的簡易部落格</h1>
+            <p class="text-gray-600">一個用 Flask 打造的簡單範例</p>
+            <a href="{{ url_for('create') }}" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                建立新文章
+            </a>
+        </div>
+
+        <!-- 文章列表 -->
+        <div class="space-y-6">
+            {% for post in posts %}
+            <div class="bg-white rounded-lg shadow-lg p-6 transition duration-300 hover:shadow-xl">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    <a href="{{ url_for('post', post_id=post.id) }}" class="hover:text-blue-600">{{ post.title }}</a>
+                </h2>
+                <p class="text-gray-500 text-sm mb-4">作者：{{ post.author }}</p>
+                <!-- 顯示部分內容 -->
+                <p class="text-gray-700">
+                    {{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}
+                </p>
+                 <a href="{{ url_for('post', post_id=post.id) }}" class="text-blue-500 hover:underline mt-4 inline-block">閱讀更多 &rarr;</a>
+            </div>
+            {% else %}
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700">目前沒有任何文章。</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <footer class="text-center text-gray-500 mt-12">
+            <p>&copy; 2025 簡易部落格. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

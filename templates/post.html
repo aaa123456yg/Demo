@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <!-- 引入 Tailwind CSS 以美化介面 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="container mx-auto max-w-3xl p-4 md:p-8">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <!-- 文章標題 -->
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">{{ post.title }}</h1>
+            <!-- 作者資訊 -->
+            <p class="text-gray-500 text-md mb-8">作者：{{ post.author }}</p>
+
+            <!-- 文章內容 -->
+            <div class="prose lg:prose-xl max-w-none text-gray-800">
+                <!-- 將換行符號轉換為 <br> 標籤以正確顯示 -->
+                {{ post.content | replace('\n', '<br>') | safe }}
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="{{ url_for('index') }}" class="text-blue-500 hover:underline">&larr; 返回文章列表</a>
+        </div>
+    </div>
+
+</body>
+</html>
