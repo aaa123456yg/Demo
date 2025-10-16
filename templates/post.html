@@ -3,30 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ post.title }}</title>
-    <!-- 引入 Tailwind CSS 以美化介面 -->
+    <title>編輯文章：{{ post.title }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans">
-
-    <div class="container mx-auto max-w-3xl p-4 md:p-8">
+    <div class="container mx-auto max-w-2xl p-4 md:p-8">
         <div class="bg-white rounded-lg shadow-lg p-8">
-            <!-- 文章標題 -->
-            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">{{ post.title }}</h1>
-            <!-- 作者資訊 -->
-            <p class="text-gray-500 text-md mb-8">作者：{{ post.author }}</p>
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">編輯文章</h1>
+            
+            <form id="edit-form">
+                <input type="hidden" name="id" value="{{ post.id }}">
+                <div class="mb-4">
+                    <label for="title" class="block text-gray-700 text-sm font-bold mb-2">標題</label>
+                    <input type="text" name="title" id="title" value="{{ post.title }}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+                </div>
 
-            <!-- 文章內容 -->
-            <div class="prose lg:prose-xl max-w-none text-gray-800">
-                <!-- 將換行符號轉換為 <br> 標籤以正確顯示 -->
-                {{ post.content | replace('\n', '<br>') | safe }}
-            </div>
-        </div>
+                <div class="mb-4">
+                    <label for="author" class="block text-gray-700 text-sm font-bold mb-2">作者</label>
+                    <input type="text" name="author" id="author" value="{{ post.author }}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+                </div>
 
-        <div class="mt-8 text-center">
-            <a href="{{ url_for('index') }}" class="text-blue-500 hover:underline">&larr; 返回文章列表</a>
+                <div class="mb-6">
+                    <label for="content" class="block text-gray-700 text-sm font-bold mb-2">文章內容</label>
+                    <textarea name="content" id="content" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 h-48">{{ post.content }}</textarea>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">儲存變更</button>
+                    <a href="{{ url_for('post_page', post_id=post.id) }}" class="text-sm text-gray-600 hover:text-gray-800">取消</a>
+                </div>
+            </form>
         </div>
     </div>
 
+    <script>
+        document.getElementById('edit-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const postId = formData.get('id');
+            const data = {
+                title: formData.get('title'),
+                author: formData.get('author'),
+                content: formData.get('content')
+            };
+
+            fetch(`/api/posts/${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('網路回應錯誤');
+                }
+                return response.json();
+            })
+            .then(updatedPost => {
+                // 成功後跳轉回文章詳細頁面
+                window.location.href = `/post/${updatedPost.id}`;
+            })
+            .catch(error => {
+                console.error('更新文章失敗:', error);
+                alert('更新文章失敗，請檢查主控台訊息。');
+            });
+        });
+    </script>
 </body>
 </html>
